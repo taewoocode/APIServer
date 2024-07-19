@@ -45,9 +45,22 @@ class UserServiceTest {
 
         //then
         assertThat( users ).hasSize( 1 );
-        //실패케이스 작성
-//        assertThat( users.get( 0 ).getName() ).isEqualTo( "taewoewoe" );
         assertThat( users.get( 0 ).getName() ).isEqualTo( "taewoo" );
+    }
+
+    @Test
+    @DisplayName( "사용자 조회 실패케이스" )
+    void testFindAllFail() {
+        //given
+        User user = new User(1L, "taewoo", "taewoo@taewoo.com");
+        when(userRepository.findAll()).thenReturn(Collections.singletonList(user));
+
+        // when
+        List<User> users = userService.findAll();
+
+        // then
+        assertThat(users).hasSize(1);
+        assertThat(users.get(0).getName()).isNotEqualTo("taewoewoe");
     }
 
     @Test
