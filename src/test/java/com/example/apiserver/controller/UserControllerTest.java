@@ -62,22 +62,39 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("ID로 사용자를 조회할 수 있어야 한다.")
-    void getUserById() throws Exception {
-        // given
-        User user = new User(1L, "Taewoo", "Taewoo@Taewoo");
-        when(userService.findById(1L)).thenReturn(user);
+    @DisplayName("ID로 사용자를 조회시 사용자가 없으면 상태코드 404를 반환한다.")
+    void getUserByIdNotFind() throws Exception {
+        //given
+        when( userService.findById( 1L ) ).thenReturn( null );
 
-        // when
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON));
+        //when
+        ResultActions resultActions = mockMvc.perform( MockMvcRequestBuilders.get( "/users/{id}", 1 )
+                .contentType( MediaType.APPLICATION_JSON ) );
 
         //then
-        resultActions.andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("Taewoo"))
-                .andExpect(jsonPath("$.email").value("Taewoo@Taewoo"))
-                .andDo(result -> logger.info("Response: {}", result.getResponse().getContentAsString()));
+        resultActions
+                .andExpect( status().isNotFound() )
+                .andExpect( result -> logger.info( "Response: {}", result.getResponse().getContentAsString() ) );
+    }
+
+    @Test
+    @DisplayName("ID로 사용자를 조회할 수 있어야 한다.")
+    void getUserById() throws Exception {
+
+        // given
+        User user = new User( 1L, "Taewoo", "Taewoo@Taewoo" );
+        when( userService.findById( 1L ) ).thenReturn( user );
+
+        // when
+        ResultActions resultActions = mockMvc.perform( MockMvcRequestBuilders.get( "/users/{id}", 1 )
+                .contentType( MediaType.APPLICATION_JSON ) );
+
+        //then
+        resultActions.andExpect( status().isOk() )
+                .andExpect( jsonPath( "$.id" ).value( 1 ) )
+                .andExpect( jsonPath( "$.name" ).value( "Taewoo" ) )
+                .andExpect( jsonPath( "$.email" ).value( "Taewoo@Taewoo" ) )
+                .andDo( result -> logger.info( "Response: {}", result.getResponse().getContentAsString() ) );
 
     }
 
