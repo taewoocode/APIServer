@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,7 +34,7 @@ class UserServiceTest {
 
     @Test
     @DisplayName("모든 사용자를 조회한다.")
-    void findAll() {
+    void testFindAll() {
         //given
         User user = new User( 1L, "taewoo", "taewoo@taewoo.com" );
         when( userRepository.findAll() ).thenReturn( Collections.singletonList( user ) );
@@ -46,5 +47,19 @@ class UserServiceTest {
         //실패케이스 작성
 //        assertThat( users.get( 0 ).getName() ).isEqualTo( "taewoewoe" );
         assertThat( users.get( 0 ).getName() ).isEqualTo( "taewoo" );
+    }
+
+    @Test
+    @DisplayName("ID로 조회")
+    void testFindId() {
+        //given
+        User user = new User( 1L, "Taewoo", "Teawoo@Taewoo" );
+        when( userRepository.findById( 1L ) ).thenReturn( Optional.of( user ) );
+
+        //when
+        User findId = userService.findById( 1L );
+
+        //then
+        assertThat( findId ).isNotNull();
     }
 }
