@@ -62,7 +62,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("ID로 조회")
+    @DisplayName("ID로 조회한다.")
     void testFindId() {
         //given
         User user = new User( 1L, "Taewoo", "Teawoo@Taewoo" );
@@ -116,7 +116,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("사용자 저장에 실패한다.")
+    @DisplayName("사용자 저장에 실패 한다.")
     void testSaveFailUser() {
         //given
         User user = new User( 1L, "Taewoo", "Taewoo@Gmail.com" );
@@ -130,7 +130,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("사용자 삭제 성공")
+    @DisplayName("사용자 삭제 성공한다.")
     void testDeleteUser() {
 
         //given
@@ -141,5 +141,19 @@ class UserServiceTest {
 
         //then
         verify( userRepository, times( 1 ) ).deleteById( 1L );
+    }
+
+    @Test
+    @DisplayName("사용자 삭제 실패한다.")
+    void testDeleteUserFailure() {
+        // given
+        doNothing().when(userRepository).deleteById(1L);
+
+        // when
+        userService.deleteById(1L);
+
+        // then
+        verify(userRepository, times(1)).deleteById(1L);
+        verify(userRepository, never()).deleteById(2L);
     }
 }
