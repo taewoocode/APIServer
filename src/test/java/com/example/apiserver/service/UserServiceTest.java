@@ -99,7 +99,6 @@ class UserServiceTest {
         assertThat( findId ).isNull();
     }
 
-
     @Test
     @DisplayName("사용자 저장을 성공해야 한다.")
     void testSaveUser() {
@@ -119,7 +118,15 @@ class UserServiceTest {
     @Test
     @DisplayName("사용자 저장에 실패한다.")
     void testSaveFailUser() {
+        //given
+        User user = new User( 1L, "Taewoo", "Taewoo@Gmail.com" );
+        when( userRepository.save( user ) ).thenReturn( user );
+        //when
+        User saveUser = userService.save( user );
 
+        //then
+        assertThat( saveUser ).isNotNull();
+        assertThat( saveUser.getName() ).isNotEqualTo( "Hi" );
     }
 
     @Test
