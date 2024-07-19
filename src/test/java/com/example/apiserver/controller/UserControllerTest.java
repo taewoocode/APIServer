@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
@@ -75,21 +76,20 @@ class UserControllerTest {
     @Test
     @DisplayName("새로운 사용자를 생성할 수 있어야 한다.")
     void createUser() throws Exception {
-        // given
+        //given
         User userToCreate = new User(null, "Taewoo", "Teawoo@Taewoo");
         User createdUser = new User(1L, "Taewoo", "Taewoo@Taewoo");
-
         Mockito.when(userService.save(Mockito.any(User.class))).thenReturn(createdUser);
-
         String userJson = objectMapper.writeValueAsString(userToCreate);
 
-        // when & then
-        mockMvc.perform(MockMvcRequestBuilders.post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(userJson))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.name").value("Taewoo"))
-                .andExpect(jsonPath("$.email").value("Taewoo@Taewoo"));
+        // when
+        ResultActions resultActions = mockMvc.perform( MockMvcRequestBuilders.post( "/users" )
+                        .contentType( MediaType.APPLICATION_JSON )
+                        .content( userJson ) )
+                //then
+                .andExpect( status().isCreated() )
+                .andExpect( jsonPath( "$.id" ).value( 1 ) )
+                .andExpect( jsonPath( "$.name" ).value( "Taewoo" ) )
+                .andExpect( jsonPath( "$.email" ).value( "Taewoo@Taewoo" ) );
     }
 }
