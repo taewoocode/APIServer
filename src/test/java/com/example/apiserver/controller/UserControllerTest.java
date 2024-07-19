@@ -2,6 +2,7 @@ package com.example.apiserver.controller;
 
 import com.example.apiserver.entity.User;
 import com.example.apiserver.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -75,6 +76,24 @@ class UserControllerTest {
         resultActions
                 .andExpect( status().isNotFound() )
                 .andExpect( result -> logger.info( "Response: {}", result.getResponse().getContentAsString() ) );
+    }
+
+    @Test
+    @DisplayName("사용자 정보를 수정할 때 잘못된 요청이 들어오면 400 Bad Request 응답을 반환해야 한다.")
+    void postUserBadRequest() throws Exception {
+        //given
+        User invalidUser = new User(1L, "", "InvalidEmail");
+        String userJson = objectMapper.writeValueAsString(invalidUser);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(userJson));
+
+        //then
+        resultActions
+                .andExpect(status().isBadRequest())
+                .andDo(result -> logger.info("Response: {}", result.getResponse().getContentAsString()));
     }
 
     @Test

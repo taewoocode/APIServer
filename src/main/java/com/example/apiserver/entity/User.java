@@ -15,7 +15,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Name is mandatory") // 필드가 비어있으면 안 됨
     private String name;
+
+    @Email(message = "Email should be valid") // 유효한 이메일 주소여야 함
     private String email;
 
 
