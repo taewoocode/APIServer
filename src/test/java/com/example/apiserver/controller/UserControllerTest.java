@@ -2,7 +2,6 @@ package com.example.apiserver.controller;
 
 import com.example.apiserver.entity.User;
 import com.example.apiserver.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -21,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -44,15 +44,15 @@ class UserControllerTest {
     @Test
     @DisplayName("모든 사용자 목록을 조회할 수 있어야 한다.")
     void getAllUsers() throws Exception {
-        // given
+        //given
         User user1 = new User(1L, "Taewoo", "Taewoo@Gmail.com");
         User user2 = new User(2L, "Hello", "Hello@Gmail.com");
         List<User> users = Arrays.asList(user1, user2);
 
-        // when
+        //when
         when(userService.findAll()).thenReturn(users);
 
-        // then
+        //then
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/users")
                 .contentType(MediaType.APPLICATION_JSON));
 
@@ -81,16 +81,16 @@ class UserControllerTest {
     @Test
     @DisplayName("사용자 정보를 생성할 때 잘못된 요청 상태코드 400를 반환한다.")
     void createUser_BadRequest() throws Exception {
-        // given
+        //given
         User invalidUser = new User(null, "", "asldkj");
         String userJson = objectMapper.writeValueAsString(invalidUser);
 
-        // when
+        //when
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userJson));
 
-        // then
+        //then
         resultActions
                 .andExpect(status().isBadRequest())
                 .andDo(result -> logger.info("Response: {}", result.getResponse().getContentAsString()));
@@ -100,11 +100,11 @@ class UserControllerTest {
     @DisplayName("ID로 사용자를 조회할 수 있어야 한다.")
     void getUserById() throws Exception {
 
-        // given
+        //given
         User user = new User( 1L, "Taewoo", "Taewoo@Taewoo" );
         when( userService.findById( 1L ) ).thenReturn( user );
 
-        // when
+        //when
         ResultActions resultActions = mockMvc.perform( MockMvcRequestBuilders.get( "/users/{id}", 1 )
                 .contentType( MediaType.APPLICATION_JSON ) );
 
@@ -120,13 +120,13 @@ class UserControllerTest {
     @Test
     @DisplayName("새로운 사용자를 생성할 수 있어야 한다.")
     void createUser() throws Exception {
-        // given
+        //given
         User userToCreate = new User(null, "Taewoo", "Taewoo@Taewoo");
         User createdUser = new User(1L, "Taewoo", "Taewoo@Taewoo");
         when(userService.save(Mockito.any(User.class))).thenReturn(createdUser);
         String userJson = objectMapper.writeValueAsString(userToCreate);
 
-        // when
+        //when
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.post("/users")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userJson));
@@ -142,12 +142,12 @@ class UserControllerTest {
     @Test
     @DisplayName("사용자 정보를 수정할 수 있어야 한다.")
     void updateUser() throws Exception {
-        // given
+        //given
         User user = new User(1L, "Taewoo", "TaeWoo@TaeWoo");
         when(userService.save(Mockito.any(User.class))).thenReturn(user);
         String userJson = objectMapper.writeValueAsString(new User(1L, "Taewoo", "Taewoo@Taewoo"));
 
-        // when
+        //when
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.put("/users/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(userJson));
@@ -167,8 +167,25 @@ class UserControllerTest {
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.delete("/users/{id}", 1)
                 .contentType(MediaType.APPLICATION_JSON));
 
+        //then
         resultActions
                 .andExpect(status().isNoContent())
+                .andDo(result -> logger.info("Response: {}", result.getResponse().getContentAsString()));
+    }
+
+    @Test
+    @DisplayName("사용자 삭제 요청 시 사용자가 없으면 404 Not Found 응답을 반환해야 한다.")
+    void deleteUser_NotFound() throws Exception {
+        //given
+        doThrow(new UserNotFoundException("User not found")).when(userService).deleteById(1L);
+
+        //when
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.delete("/users/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        //then
+        resultActions
+                .andExpect(status().isNotFound())
                 .andDo(result -> logger.info("Response: {}", result.getResponse().getContentAsString()));
     }
 }
