@@ -14,9 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
@@ -49,7 +47,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName( "사용자 조회 실패케이스" )
+    @DisplayName( "사용자 조회에 실패한다." )
     void testFindAllFail() {
         //given
         User user = new User(1L, "taewoo", "taewoo@taewoo.com");
@@ -78,8 +76,23 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("ID조회에 실패한다.")
+    void testFindByIdFail() {
+        //given
+        User user = new User( 1L, "Taewoo", "Taewoo@hello" );
+        when( userRepository.findById( 1L ) ).thenReturn( Optional.of( user ) );
+        //when
+        User findId = userService.findById( 1L );
+        //then
+        assertThat( findId ).isNotNull();
+        assertThat( findId.getId() ).isNotEqualTo( "2L" );
+    }
+
+
+    @Test
     @DisplayName("사용자 저장을 성공해야 한다.")
     void testSaveUser() {
+
         //given
         User user = new User( 1L, "Taewoo", "Taewoo@Taewoo" );
         when( userRepository.save( user ) ).thenReturn( user );
@@ -103,6 +116,5 @@ class UserServiceTest {
 
         //then
         verify( userRepository, times( 1 ) ).deleteById( 1L );
-
     }
 }
