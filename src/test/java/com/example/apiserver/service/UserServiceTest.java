@@ -14,8 +14,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 
@@ -61,5 +63,21 @@ class UserServiceTest {
 
         //then
         assertThat( findId ).isNotNull();
+    }
+
+    @Test
+    @DisplayName("사용자 저장을 성공해야 한다.")
+    void testSaveUser() {
+        //given
+        User user = new User( 1L, "Taewoo", "Taewoo@Taewoo" );
+        when( userRepository.save( user ) ).thenReturn( user );
+
+        //when
+        User saveUser = userService.save( user );
+
+        //then
+        assertThat( saveUser ).isNotNull();
+        assertThat( saveUser.getName() ).isEqualTo( "Taewoo" );
+
     }
 }
