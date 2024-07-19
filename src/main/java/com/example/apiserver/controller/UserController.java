@@ -2,6 +2,7 @@ package com.example.apiserver.controller;
 
 import com.example.apiserver.entity.User;
 import com.example.apiserver.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         log.info("Request to create user: {}", user);
         User createdUser = userService.save(user);
         return new ResponseEntity<>( createdUser, null, HttpStatus.CREATED );

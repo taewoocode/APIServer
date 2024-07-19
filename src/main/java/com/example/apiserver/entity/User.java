@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 
 import java.util.Objects;
@@ -16,10 +18,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name is mandatory") // 필드가 비어있으면 안 됨
+    @NotBlank(message = "공백이면 안댐")
     private String name;
 
-    @Email(message = "Email should be valid") // 유효한 이메일 주소여야 함
+    @Email(message = "이메일 유효성 검사")
     private String email;
 
 
