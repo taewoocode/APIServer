@@ -17,8 +17,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 class UserServiceTest {
@@ -78,6 +77,19 @@ class UserServiceTest {
         //then
         assertThat( saveUser ).isNotNull();
         assertThat( saveUser.getName() ).isEqualTo( "Taewoo" );
+    }
+
+    @Test
+    @DisplayName("사용자 삭제 성공")
+    void testDeleteUser() {
+        //given
+        doNothing().when( userRepository ).deleteById( 1L );
+
+        //when
+        userService.deleteById( 1L );
+
+        //then
+        verify( userRepository, times( 1 ) ).deleteById( 1L );
 
     }
 }
