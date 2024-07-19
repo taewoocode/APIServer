@@ -88,6 +88,17 @@ class UserServiceTest {
         assertThat( findId.getId() ).isNotEqualTo( "2L" );
     }
 
+    @Test
+    @DisplayName("ID가 존재하지 않으면 Null을 반환한다.")
+    void testFindByIdReturnNull() {
+        //given
+        when( userRepository.findById( 1L ) ).thenReturn( Optional.empty() );
+        //when
+        User findId = userService.findById( 1L );
+        //then
+        assertThat( findId ).isNull();
+    }
+
 
     @Test
     @DisplayName("사용자 저장을 성공해야 한다.")
@@ -106,8 +117,15 @@ class UserServiceTest {
     }
 
     @Test
+    @DisplayName("사용자 저장에 실패한다.")
+    void testSaveFailUser() {
+
+    }
+
+    @Test
     @DisplayName("사용자 삭제 성공")
     void testDeleteUser() {
+
         //given
         doNothing().when( userRepository ).deleteById( 1L );
 
