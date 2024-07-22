@@ -18,7 +18,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "공백이면 안댐")
+    @NotBlank(message = "공백 유효성 검사")
     private String name;
 
     @Email(message = "이메일 유효성 검사")
